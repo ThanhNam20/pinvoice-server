@@ -1,5 +1,5 @@
 const certificatePasswordGenerator = () => {
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const passwordLength = 12;
   let password = '';
   for (let i = 0; i <= passwordLength; i++) {

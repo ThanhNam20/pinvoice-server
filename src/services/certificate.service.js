@@ -4,16 +4,9 @@ const genClientCertificate = (userBody) => {
   const { name, commonName, organizationalUnitName, organizationName, localityName, stateOrProvinceName, countryName } =
     userBody;
   const p12Password = certificatePasswordGenerator();
+  console.log(p12Password)
   exec(
-    `cd
-    && cd PKIServer
-    && keytool -genkeypair -alias ${name} -keyalg RSA -keysize 2048 -dname "CN=${commonName}, OU=${organizationalUnitName}, O=${organizationName}, L=${localityName}, ST=${stateOrProvinceName}, C=${countryName}" -keypass ${p12Password} -validity 100 -storetype PKCS12 -keystore ${name}.p12 -storepass ${p12Password}
-    && keytool -certreq -alias ${name} -keypass ${p12Password} -storetype PKCS12 -keystore ${name}.p12 -storepass ${p12Password} -file ${name}.csr
-    && ejbca/bin/ejbca.sh ra addendentity --username ${name} --dn "CN=${commonName}, OU=${organizationalUnitName}, O=${organizationName}, L=${localityName}, ST=${stateOrProvinceName}, C=${countryName}" --token PEM --caname TESTCA --type 1 --password ${p12Password}
-    && ejbca/bin/ejbca.sh createcert --username ${name} --password ${p12Password} -c ${name}.csr -f ${name}.pem
-    && keytool -importcert -alias signKey -file ${name}.pem -keystore ${name}.p12 -storepass ${p12Password} -trustcacerts -noprompt
-    && cp -b ${name}.p12 ~/Pinvoice/pinvoice-server/cert
-  `,
+    `cd && cd PKIServer/ && keytool -genkeypair -alias ${name} -keyalg RSA -keysize 2048 -dname "CN=${name}, OU=${organizationalUnitName}, O=${organizationName}, L=${localityName}, ST=${stateOrProvinceName}, C=${countryName}" -keypass ${p12Password} -validity 365 -storetype PKCS12 -keystore ${name}.p12 -storepass ${p12Password} && keytool -certreq -alias ${name} -keypass ${p12Password} -storetype PKCS12 -keystore ${name}.p12 -storepass ${p12Password} -file ${name}.csr && ejbca/bin/ejbca.sh ra addendentity --username ${name} --dn "CN=${name}, OU=${organizationalUnitName}, O=${organizationName}, L=${localityName}, ST=${stateOrProvinceName}, C=${countryName}" --token PEM --caname TESTCA --type 1 --password ${p12Password} && ejbca/bin/ejbca.sh createcert --username ${name} --password ${p12Password} -c ${name}.csr -f ${name}.pem && keytool -importcert -alias signKey -file ${name}.pem -keystore ${name}.p12 -storepass ${p12Password} -trustcacerts -noprompt && cp -b ${name}.p12 ~/Pinvoice/pinvoice-server/src/certificates`,
     (error, stdout, stderr) => {
       if (error) {
         console.log(`error: ${error.message}`);
