@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-const { exec } = require('child_process');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
 
@@ -10,22 +9,10 @@ const register = catchAsync(async (req, res) => {
 });
 
 const login = catchAsync(async (req, res) => {
-  exec('', (error, stdout, stderr) => {
-    if (error) {
-      console.log(`error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.log(`stderr: ${stderr}`);
-      return;
-    }
-    console.log(`stdout: ${stdout}`);
-  });
-
-  // const { email, password } = req.body;
-  // const user = await authService.loginUserWithEmailAndPassword(email, password);
-  // const tokens = await tokenService.generateAuthTokens(user);
-  // res.send({ user, tokens });
+  const { email, password } = req.body;
+  const user = await authService.loginUserWithEmailAndPassword(email, password);
+  const tokens = await tokenService.generateAuthTokens(user);
+  res.send({ user, tokens });
   res.send('hahaha');
 });
 

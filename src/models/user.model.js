@@ -67,7 +67,7 @@ const userSchema = mongoose.Schema(
     countryName: {
       type: String,
       default: '',
-    },
+    }
   },
   {
     timestamps: true,
