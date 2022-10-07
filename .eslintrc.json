@@ -14,7 +14,6 @@
     "no-underscore-dangle": "off",
     "consistent-return": "off",
     "jest/expect-expect": "off",
-    "security/detect-object-injection": "off",
-    "allowForLoopAfterthoughts": true
+    "security/detect-object-injection": "off"
   }
 }

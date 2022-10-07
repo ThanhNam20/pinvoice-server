@@ -40,6 +40,10 @@ const updateUser = {
       localityName: Joi.string().required(),
       stateOrProvinceName: Joi.string().required(),
       countryName: Joi.string().required(),
+      phoneNumber: Joi.string().required(),
+      textCode: Joi.string().required(),
+      address: Joi.string().required(),
+      certificatePassword: Joi.string(),
     })
     .min(1),
 };

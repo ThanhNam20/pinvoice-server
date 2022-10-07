@@ -67,7 +67,23 @@ const userSchema = mongoose.Schema(
     countryName: {
       type: String,
       default: '',
-    }
+    },
+    phoneNumber: {
+      type: String,
+      default: '',
+    },
+    textCode: {
+      type: String,
+      default: '',
+    },
+    address: {
+      type: String,
+      default: '',
+    },
+    certificatePassword: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,
