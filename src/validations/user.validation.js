@@ -44,6 +44,7 @@ const updateUser = {
       textCode: Joi.string().required(),
       address: Joi.string().required(),
       certificatePassword: Joi.string(),
+      accountNumber: Joi.string().required(),
     })
     .min(1),
 };

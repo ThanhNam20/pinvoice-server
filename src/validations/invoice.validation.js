@@ -12,6 +12,8 @@ const createInvoice = {
     customerAccountNumber: Joi.string().required(),
     paymentMethod: Joi.string().required(),
     totalPayment: Joi.string().required(),
+    customerCompanyName: Joi.string(),
+    note: Joi.string(),
   }),
 };
 
@@ -39,6 +41,8 @@ const updateInvoice = {
     customerAccountNumber: Joi.string().required(),
     paymentMethod: Joi.string().required(),
     totalPayment: Joi.string().required(),
+    customerCompanyName: Joi.string(),
+    note: Joi.string(),
   }),
 };
 

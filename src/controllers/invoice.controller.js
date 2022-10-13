@@ -1,4 +1,6 @@
 const httpStatus = require('http-status');
+const fs = require('fs');
+const html_to_pdf = require('html-pdf-node');
 const { invoiceService } = require('../services');
 const catchAsync = require('../utils/catchAsync');
 const pick = require('../utils/pick');
@@ -34,10 +36,23 @@ const deleteInvoice = catchAsync(async (req, res) => {
   res.status(httpStatus.ACCEPTED).send({ result: 'Delete invoice successfully' });
 });
 
+const createPDFInvoiceWithoutSign = catchAsync(async (req, res) => {
+  const pdfInvoiceBuffer = invoiceService.generateHtmlInvoiceTemplate();
+  const options = { format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'] };
+  const file = { content: pdfInvoiceBuffer };
+  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+    const randomNumber = Math.floor(Math.random() * 5000);
+    const pdfName = `./exports/exported_file_${randomNumber}.pdf`;
+    fs.writeFileSync(pdfName, pdfBuffer);
+    res.status(httpStatus.ACCEPTED).send({ result: 'Create pdf invoice successfully' });
+  });
+});
+
 module.exports = {
   createInvoice,
   getInvoices,
   getInvoice,
   updateInvoice,
   deleteInvoice,
+  createPDFInvoiceWithoutSign,
 };

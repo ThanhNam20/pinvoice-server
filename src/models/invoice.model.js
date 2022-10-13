@@ -18,6 +18,10 @@ const invoiceSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    customerCompanyName: {
+      type: String,
+      required: false,
+    },
     customerAddress: {
       type: String,
       required: true,
@@ -37,6 +41,10 @@ const invoiceSchema = mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
+    },
+    note: {
+      type: String,
+      required: false,
     },
     totalPayment: {
       type: String,

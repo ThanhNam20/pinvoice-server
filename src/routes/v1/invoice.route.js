@@ -21,4 +21,6 @@ router.post(
   invoiceController.deleteInvoice
 );
 
+router.get('/create-invoice', invoiceController.createPDFInvoiceWithoutSign);
+
 module.exports = router;

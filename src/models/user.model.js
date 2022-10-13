@@ -80,6 +80,10 @@ const userSchema = mongoose.Schema(
       type: String,
       default: '',
     },
+    accountNumber: {
+      type: String,
+      default: '',
+    },
     certificatePassword: {
       type: String,
       default: '',
