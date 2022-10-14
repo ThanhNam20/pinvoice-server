@@ -46,6 +46,13 @@ const updateInvoice = {
   }),
 };
 
+const exportInvoice = {
+  query: Joi.object().keys({
+    invoiceId: Joi.string().required(),
+    clientCertificatePassword: Joi.string().required(),
+  }),
+};
+
 const deleteInvoice = {
   params: Joi.object().keys({
     invoiceId: Joi.string().custom(objectId),
@@ -58,4 +65,5 @@ module.exports = {
   updateInvoice,
   getInvoice,
   getInvoices,
+  exportInvoice,
 };

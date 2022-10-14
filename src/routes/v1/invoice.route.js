@@ -6,7 +6,7 @@ const invoiceController = require('../../controllers/invoice.controller');
 
 const router = express.Router();
 
-router.post('/createInvoice', auth(), validate(invoiceValidation.createInvoice), invoiceController.createInvoice);
+router.post('/create-invoice', auth(), validate(invoiceValidation.createInvoice), invoiceController.createInvoice);
 
 router.get('/getInvoices', auth(), validate(invoiceValidation.getInvoices), invoiceController.getInvoices);
 
@@ -21,6 +21,6 @@ router.post(
   invoiceController.deleteInvoice
 );
 
-router.get('/create-invoice', invoiceController.createPDFInvoiceWithoutSign);
+router.post('/export-invoice', auth(), invoiceController.exportInvoiceWithClientSign);
 
 module.exports = router;

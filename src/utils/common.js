@@ -10,6 +10,15 @@ const certificatePasswordGenerator = () => {
   return password;
 };
 
+const modelApiResponse = (status, data, message) => {
+  return {
+    status,
+    data,
+    message,
+  };
+};
+
 module.exports = {
   certificatePasswordGenerator,
+  modelApiResponse,
 };

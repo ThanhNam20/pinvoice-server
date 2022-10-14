@@ -1,14 +1,19 @@
 const httpStatus = require('http-status');
-const fs = require('fs');
-const html_to_pdf = require('html-pdf-node');
 const { invoiceService } = require('../services');
 const catchAsync = require('../utils/catchAsync');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
+const { modelApiResponse } = require('../utils/common');
 
 const createInvoice = catchAsync(async (req, res) => {
   const invoice = await invoiceService.createInvoice(req.body);
-  res.status(httpStatus.CREATED).send(invoice);
+  invoiceService.generateHtmlInvoiceTemplate(invoice);
+  res.status(httpStatus.CREATED).send(modelApiResponse('success', invoice, 'Create invoice successfully'));
+});
+
+const exportInvoiceWithClientSign = catchAsync(async (req, res) => {
+  await invoiceService.exportInvoiceWithClientSign(req, res);
+  res.status(httpStatus.CREATED).send(modelApiResponse('success', {}, 'Export invoice with sign successfully'));
 });
 
 const getInvoices = catchAsync(async (req, res) => {
@@ -32,20 +37,8 @@ const updateInvoice = catchAsync(async (req, res) => {
 });
 
 const deleteInvoice = catchAsync(async (req, res) => {
-  await invoiceService.deleteinvoiceById(req.params.invoiceId);
+  await invoiceService.deleteInvoiceById(req.params.invoiceId);
   res.status(httpStatus.ACCEPTED).send({ result: 'Delete invoice successfully' });
-});
-
-const createPDFInvoiceWithoutSign = catchAsync(async (req, res) => {
-  const pdfInvoiceBuffer = invoiceService.generateHtmlInvoiceTemplate();
-  const options = { format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'] };
-  const file = { content: pdfInvoiceBuffer };
-  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
-    const randomNumber = Math.floor(Math.random() * 5000);
-    const pdfName = `./exports/exported_file_${randomNumber}.pdf`;
-    fs.writeFileSync(pdfName, pdfBuffer);
-    res.status(httpStatus.ACCEPTED).send({ result: 'Create pdf invoice successfully' });
-  });
 });
 
 module.exports = {
@@ -54,5 +47,5 @@ module.exports = {
   getInvoice,
   updateInvoice,
   deleteInvoice,
-  createPDFInvoiceWithoutSign,
+  exportInvoiceWithClientSign,
 };

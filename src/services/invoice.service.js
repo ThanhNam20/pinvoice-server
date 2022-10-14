@@ -1,6 +1,13 @@
 const httpStatus = require('http-status');
+const fs = require('fs');
+// eslint-disable-next-line camelcase
+const html_to_pdf = require('html-pdf-node');
+const path = require('path');
+const SignPDF = require('./signpdf.service');
 const { Invoice } = require('../models');
 const ApiError = require('../utils/ApiError');
+const { userService } = require('.');
+const uploadFile = require('../middlewares/upload');
 
 const createInvoice = async (invoiceBody) => {
   return Invoice.create(invoiceBody);
@@ -34,7 +41,22 @@ const deleteInvoiceById = async (invoiceId) => {
   return invoice;
 };
 
-const generateHtmlInvoiceTemplate = () => {
+const generateHtmlInvoiceTemplate = async (invoiceData) => {
+  const userCreateInvoiceData = await userService.getUserById(invoiceData.userId);
+  let listProductHtml = ``;
+  invoiceData.listProducts.forEach((product, index) => {
+    listProductHtml += `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${product.productName}</td>
+      <td>${product.productUnit}</td>
+      <td>${product.productQuantity}</td>
+      <td>${product.productPrice}</td>
+      <td>${product.productPrice * product.productQuantity}</td>
+    </tr>
+    `;
+  });
+
   const html = `
   <!DOCTYPE html>
   <html lang="en">
@@ -189,7 +211,6 @@ const generateHtmlInvoiceTemplate = () => {
           margin: 0 auto;
           margin-bottom: 0.5cm;
           margin-top: 0.5cm;
-          box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
         }
 
         page[size="A4"] {
@@ -314,21 +335,21 @@ const generateHtmlInvoiceTemplate = () => {
           <div class="body">
             <hr />
             <div class="body-information">
-              <p>Đơn vị bán hàng <i>(Seller)</i>:</p>
-              <p>Mã số thuế <i>(Tax code)</i>:</p>
-              <p>Địa chỉ <i>(Address)</i>:</p>
-              <p>Điện thoại <i>(Phone)</i>:</p>
-              <p>Số tài khoản <i>(Account No.)</i>:</p>
+              <p>Đơn vị bán hàng <i>(Seller)</i>: ${userCreateInvoiceData.organizationName}</p>
+              <p>Mã số thuế <i>(Tax code)</i>: ${userCreateInvoiceData.textCode}</p>
+              <p>Địa chỉ <i>(Address)</i>: ${userCreateInvoiceData.address}</p>
+              <p>Điện thoại <i>(Phone)</i>: ${userCreateInvoiceData.phoneNumber}</p>
+              <p>Số tài khoản <i>(Account No.)</i>: ${userCreateInvoiceData.accountNumber}</p>
             </div>
             <hr />
             <div class="body-information">
-              <p>Họ tên người mua hàng <i>(Customer's Name)</i>:</p>
-              <p>Tên đơn vị <i>(Company's Name)</i>:</p>
-              <p>Mã số thuế <i>(Tax code)</i>:</p>
-              <p>Địa chỉ <i>(Address)</i>:</p>
-              <p>Điện thoại <i>(Phone)</i>:</p>
-              <p>Hình thức thanh toán <i>(Payment method)</i>:</p>
-              <p>Ghi chú <i>(Note)</i>:</p>
+              <p>Họ tên người mua hàng <i>(Customer's Name)</i>: ${invoiceData.customerName}</p>
+              <p>Tên đơn vị <i>(Company's Name)</i>: ${invoiceData.customerName}</p>
+              <p>Mã số thuế <i>(Tax code)</i>: ${invoiceData.customerTextCode}</p>
+              <p>Địa chỉ <i>(Address)</i>: ${invoiceData.customerAddress}</p>
+              <p>Điện thoại <i>(Phone)</i>: ${invoiceData.customerPhoneNumber}</p>
+              <p>Hình thức thanh toán <i>(Payment method)</i>: ${invoiceData.paymentMethod}</p>
+              <p>Ghi chú <i>(Note)</i>: ${invoiceData.note}</p>
             </div>
 
             <div class="table-information">
@@ -343,7 +364,7 @@ const generateHtmlInvoiceTemplate = () => {
                 </tr>
 
                 <tr>
-                  <td>1</td>
+                  <td></td>
                   <td>2</td>
                   <td>3</td>
                   <td>4</td>
@@ -351,27 +372,12 @@ const generateHtmlInvoiceTemplate = () => {
                   <td>6 = 4 * 5</td>
                 </tr>
 
-                <tr>
-                  <td>1</td>
-                  <td>lorem</td>
-                  <td>Germany</td>
-                  <td>Maria Anders</td>
-                  <td>Germany</td>
-                  <td>Germany</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>Maria Anders</td>
-                  <td>Germany</td>
-                  <td>Maria Anders</td>
-                  <td>Germany</td>
-                  <td>Germany</td>
-                </tr>
-
+                ${listProductHtml}
                 <tr id="total-amount">
                   <td colspan="5"></td>
                   <td>Germany</td>
                 </tr>
+
                 <tr id="total-vat">
                   <td colspan="3">Thuế giá trị gia tăng</td>
                   <td colspan="2">Germany</td>
@@ -404,7 +410,36 @@ const generateHtmlInvoiceTemplate = () => {
     </body>
   </html>
 `;
-  return html;
+  const options = { format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'] };
+  const file = { content: html };
+  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+    const pdfName = `./exports/${invoiceData.id}.pdf`;
+    fs.writeFileSync(pdfName, pdfBuffer);
+  });
+};
+
+const exportInvoiceWithClientSign = async (req, res) => {
+  try {
+    await uploadFile(req, res);
+    if (req.file === undefined) {
+      return res.status(400).send({ message: 'Upload a file please!' });
+    }
+    if (req.body.invoiceId === '' || req.body.clientCertificatePassword === '') {
+      return res.status(400).send({ message: 'invoiceId field or clientCertificatePassword field is not empty.' });
+    }
+    const pdfBuffer = new SignPDF(
+      path.resolve(`exports/${req.body.invoiceId}.pdf`),
+      path.resolve(`client_certificates/${req.file.filename}`),
+      req.body.clientCertificatePassword
+    );
+    const signedDocs = await pdfBuffer.signPDF();
+    const pdfName = `./signed_invoices/${req.body.invoiceId}-sign.pdf`;
+    fs.writeFileSync(pdfName, signedDocs);
+  } catch (err) {
+    res.status(500).send({
+      message: `${err}`,
+    });
+  }
 };
 
 module.exports = {
@@ -414,4 +449,5 @@ module.exports = {
   deleteInvoiceById,
   updateInvoiceById,
   generateHtmlInvoiceTemplate,
+  exportInvoiceWithClientSign,
 };
