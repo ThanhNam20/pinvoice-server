@@ -44,6 +44,10 @@ const userSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isInformationVerified: {
+      type: Boolean,
+      default: false,
+    },
     commonName: {
       type: String,
       default: '',
