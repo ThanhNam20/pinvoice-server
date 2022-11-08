@@ -49,7 +49,7 @@ const showInvoiceInBrowser = catchAsync(async (req, res) => {
     fs.createReadStream(path).pipe(res);
   } else {
     res.status(500);
-    res.status(httpStatus.ACCEPTED).send({ result: 'Delete invoice successfully' });
+    res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
   }
 });
 

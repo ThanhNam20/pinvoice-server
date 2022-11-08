@@ -8,6 +8,7 @@ const { Invoice } = require('../models');
 const ApiError = require('../utils/ApiError');
 const { userService } = require('.');
 const uploadFile = require('../middlewares/upload');
+const { invoiceNumberGenerator } = require('../utils/common');
 
 const createInvoice = async (invoiceBody) => {
   const invoiceData = { ...invoiceBody, createdDate: new Date().toUTCString() };
@@ -428,6 +429,22 @@ const exportInvoiceWithClientSign = async (req, res) => {
     if (req.body.invoiceId === '' || req.body.clientCertificatePassword === '') {
       return res.status(400).send({ message: 'invoiceId field or clientCertificatePassword field is not empty.' });
     }
+
+    const invoice = await getInvoiceById(req.body.invoiceId);
+    if (!invoice) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
+    }
+
+    const updateBody = {
+      ...invoice,
+      isRelease: true,
+      releaseDate: new Date().toUTCString(),
+      invoiceNumber: invoiceNumberGenerator(),
+    };
+
+    Object.assign(invoice, updateBody);
+    await invoice.save();
+
     const pdfBuffer = new SignPDF(
       path.resolve(`exports/${req.body.invoiceId}.pdf`),
       path.resolve(`client_certificates/${req.file.filename}`),
