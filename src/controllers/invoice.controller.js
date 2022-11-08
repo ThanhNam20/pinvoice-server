@@ -1,4 +1,5 @@
 const httpStatus = require('http-status');
+const fs = require('fs');
 const { invoiceService } = require('../services');
 const catchAsync = require('../utils/catchAsync');
 const pick = require('../utils/pick');
@@ -20,7 +21,7 @@ const getInvoices = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await invoiceService.queryInvoices(filter, options);
-  res.status(httpStatus.ACCEPTED).send(result);
+  res.status(httpStatus.ACCEPTED).send(modelApiResponse('success', result, 'Successfully'));
 });
 
 const getInvoice = catchAsync(async (req, res) => {
@@ -28,7 +29,7 @@ const getInvoice = catchAsync(async (req, res) => {
   if (!invoice) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
   }
-  res.status(httpStatus.ACCEPTED).send(invoice);
+  res.status(httpStatus.ACCEPTED).send(modelApiResponse('success', invoice, 'Successfully'));
 });
 
 const updateInvoice = catchAsync(async (req, res) => {
@@ -41,6 +42,17 @@ const deleteInvoice = catchAsync(async (req, res) => {
   res.status(httpStatus.ACCEPTED).send({ result: 'Delete invoice successfully' });
 });
 
+const showInvoiceInBrowser = catchAsync(async (req, res) => {
+  const path = `./exports/${req.params.invoiceId}.pdf`;
+  if (fs.existsSync(path)) {
+    res.contentType('application/pdf');
+    fs.createReadStream(path).pipe(res);
+  } else {
+    res.status(500);
+    res.status(httpStatus.ACCEPTED).send({ result: 'Delete invoice successfully' });
+  }
+});
+
 module.exports = {
   createInvoice,
   getInvoices,
@@ -48,4 +60,5 @@ module.exports = {
   updateInvoice,
   deleteInvoice,
   exportInvoiceWithClientSign,
+  showInvoiceInBrowser,
 };

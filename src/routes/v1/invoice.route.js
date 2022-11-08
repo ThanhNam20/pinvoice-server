@@ -14,6 +14,13 @@ router.get('/getInvoice/:invoiceId', auth(), validate(invoiceValidation.getInvoi
 
 router.post('/updateInvoice/:invoiceId', auth(), validate(invoiceValidation.updateInvoice), invoiceController.updateInvoice);
 
+router.get(
+  '/show-invoice/:invoiceId',
+  auth(),
+  validate(invoiceValidation.getInvoice),
+  invoiceController.showInvoiceInBrowser
+);
+
 router.post(
   '/deleteInvoice/:invoiceId',
   auth('manageUsers'),

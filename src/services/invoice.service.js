@@ -10,7 +10,8 @@ const { userService } = require('.');
 const uploadFile = require('../middlewares/upload');
 
 const createInvoice = async (invoiceBody) => {
-  return Invoice.create(invoiceBody);
+  const invoiceData = { ...invoiceBody, createdDate: new Date().toUTCString() };
+  return Invoice.create(invoiceData);
 };
 
 const queryInvoices = async (filter, options) => {

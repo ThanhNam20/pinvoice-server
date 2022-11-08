@@ -48,6 +48,25 @@ const invoiceSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    invoiceNumber: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    createdDate: {
+      type: String,
+      required: true,
+    },
+    releaseDate: {
+      type: String,
+      required: false,
+      default: '',
+    },
+    isRelease: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
