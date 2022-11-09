@@ -4,7 +4,7 @@ const { certificatePasswordGenerator } = require('../utils/common');
 const genClientCertificate = (userBody) => {
   const { name, commonName, organizationalUnitName, organizationName, localityName, stateOrProvinceName, countryName } =
     userBody;
-  const trimCommonName = commonName.replace(/\s/g, '');
+  const trimCommonName = commonName.replace(/\s/g, '').toLowerCase();
   const p12Password = certificatePasswordGenerator();
   console.log(p12Password);
   exec(
