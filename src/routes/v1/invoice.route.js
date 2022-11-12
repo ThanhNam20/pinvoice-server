@@ -10,7 +10,7 @@ router.post('/create-invoice', auth(), validate(invoiceValidation.createInvoice)
 
 router.get('/getInvoices', auth(), validate(invoiceValidation.getInvoices), invoiceController.getInvoices);
 
-router.get('/getInvoice/:invoiceId', auth(), validate(invoiceValidation.getInvoice), invoiceController.getInvoice);
+router.post('/getInvoice/:invoiceId', validate(invoiceValidation.getInvoice), invoiceController.getInvoice);
 
 router.post('/updateInvoice/:invoiceId', auth(), validate(invoiceValidation.updateInvoice), invoiceController.updateInvoice);
 
