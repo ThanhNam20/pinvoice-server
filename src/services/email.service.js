@@ -55,9 +55,18 @@ If you did not create an account, then ignore this email.`;
   await sendEmail(to, subject, text);
 };
 
+const sendCertificateAndKeyForNewClient = async (to, pathCertificate, key) => {
+  const subject = 'Welcome';
+  const mail = `
+    Your key: ${key}
+  `;
+  await sendEmail(to, subject, mail);
+};
+
 module.exports = {
   transport,
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
+  sendCertificateAndKeyForNewClient,
 };

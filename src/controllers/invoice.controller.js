@@ -8,7 +8,10 @@ const { modelApiResponse } = require('../utils/common');
 
 const createInvoice = catchAsync(async (req, res) => {
   const invoice = await invoiceService.createInvoice(req.body);
+  // Gen invoice ko có chữ kí ở template
   invoiceService.generateHtmlInvoiceTemplate(invoice);
+  // Gen invoice có chữ kí ở template để sau kí vào đấy
+  invoiceService.generateHtmlInvoiceTemplateWithSignFormat(invoice);
   res.status(httpStatus.CREATED).send(modelApiResponse('success', invoice, 'Create invoice successfully'));
 });
 
