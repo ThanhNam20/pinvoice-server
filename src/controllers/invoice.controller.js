@@ -21,7 +21,7 @@ const exportInvoiceWithClientSign = catchAsync(async (req, res) => {
 });
 
 const getInvoices = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ['name', 'role']);
+  const filter = pick(req.query, ['name', 'role', 'userId']);
   const options = pick(req.query, ['sortBy', 'limit', 'page']);
   const result = await invoiceService.queryInvoices(filter, options);
   res.status(httpStatus.ACCEPTED).send(modelApiResponse('success', result, 'Successfully'));

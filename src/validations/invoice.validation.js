@@ -25,6 +25,7 @@ const getInvoice = {
 
 const getInvoices = {
   query: Joi.object().keys({
+    userId: Joi.string(),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),

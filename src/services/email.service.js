@@ -18,8 +18,8 @@ if (config.env !== 'test') {
  * @param {string} text
  * @returns {Promise}
  */
-const sendEmail = async (to, subject, text) => {
-  const msg = { from: config.email.from, to, subject, text };
+const sendEmail = async (to, subject, text, attachments = []) => {
+  const msg = { from: config.email.from, to, subject, text, attachments };
   await transport.sendMail(msg);
 };
 
@@ -55,12 +55,12 @@ If you did not create an account, then ignore this email.`;
   await sendEmail(to, subject, text);
 };
 
-const sendCertificateAndKeyForNewClient = async (to, pathCertificate, key) => {
+const sendCertificateAndKeyForNewClient = async (to, key, attachments) => {
   const subject = 'Welcome';
   const mail = `
     Your key: ${key}
   `;
-  await sendEmail(to, subject, mail);
+  await sendEmail(to, subject, mail, attachments);
 };
 
 module.exports = {

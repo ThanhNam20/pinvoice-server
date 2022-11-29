@@ -18,7 +18,11 @@ const genClientCertificate = (userBody) => {
         console.log(`stderr: ${stderr}`);
         return;
       }
-      console.log(`stdout: ${stdout}`);
+      return {
+        p12NameFile: `${trimCommonName}.p12`,
+        p12Password,
+        p12Path: `./certificates/${trimCommonName}.p12`,
+      };
     }
   );
 };
