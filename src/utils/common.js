@@ -1,6 +1,6 @@
 const certificatePasswordGenerator = () => {
   const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const passwordLength = 12;
+  const passwordLength = 24;
   let password = '';
   // eslint-disable-next-line no-plusplus
   for (let i = 0; i <= passwordLength; i++) {
