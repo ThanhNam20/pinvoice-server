@@ -26,7 +26,7 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const { p12NameFile, p12Password, p12Path } = certificateService.genClientCertificate(req.body);
+  const { p12NameFile, p12Password, p12Path } = await certificateService.genClientCertificate(req.body);
   const attachments = [{ filename: p12NameFile, path: p12Path }];
   const user = await userService.updateUserById(req.params.userId, req.body);
   await emailService.sendCertificateAndKeyForNewClient(user.email, p12Password, attachments);
