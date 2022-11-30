@@ -15,6 +15,11 @@ router.post('/getInvoice/:invoiceId', validate(invoiceValidation.getInvoice), in
 router.post('/updateInvoice/:invoiceId', auth(), validate(invoiceValidation.updateInvoice), invoiceController.updateInvoice);
 
 router.get('/show-invoice/:invoiceId', validate(invoiceValidation.getInvoice), invoiceController.showInvoiceInBrowser);
+router.get(
+  '/show-invoice-with-sign/:invoiceId',
+  validate(invoiceValidation.getInvoice),
+  invoiceController.showInvoiceInBrowserWithSign
+);
 
 router.post(
   '/deleteInvoice/:invoiceId',

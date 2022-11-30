@@ -46,7 +46,18 @@ const deleteInvoice = catchAsync(async (req, res) => {
 });
 
 const showInvoiceInBrowser = catchAsync(async (req, res) => {
-  const path = `./exports/${req.params.invoiceId}.pdf`;
+  const path = `./exports-pdf-not-sign/${req.params.invoiceId}.pdf`;
+  if (fs.existsSync(path)) {
+    res.contentType('application/pdf');
+    fs.createReadStream(path).pipe(res);
+  } else {
+    res.status(500);
+    res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
+  }
+});
+
+const showInvoiceInBrowserWithSign = catchAsync(async (req, res) => {
+  const path = `./signed_invoices/${req.params.invoiceId}-sign.pdf`;
   if (fs.existsSync(path)) {
     res.contentType('application/pdf');
     fs.createReadStream(path).pipe(res);
@@ -64,4 +75,5 @@ module.exports = {
   deleteInvoice,
   exportInvoiceWithClientSign,
   showInvoiceInBrowser,
+  showInvoiceInBrowserWithSign,
 };
