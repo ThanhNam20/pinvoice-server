@@ -26,10 +26,10 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const { p12NameFile, p12Password, p12Path } = await certificateService.genClientCertificate(req.body);
-  const attachments = [{ filename: p12NameFile, path: p12Path }];
   const user = await userService.updateUserById(req.params.userId, req.body);
-  await emailService.sendCertificateAndKeyForNewClient(user.email, p12Password, attachments);
+  await certificateService.genClientCertificate(req.body, req.params.userId);
+  // const attachments = [{ filename: p12NameFile, path: p12Path }];
+  // await emailService.sendCertificateAndKeyForNewClient(user.email, p12Password, attachments);
   res.status(httpStatus.ACCEPTED).send(modelApiResponse('success', user, 'Update user info successfully'));
 });
 
