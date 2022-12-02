@@ -46,6 +46,8 @@ const deleteInvoiceById = async (invoiceId) => {
 const generateHtmlInvoiceTemplate = async (invoiceData) => {
   const userCreateInvoiceData = await userService.getUserById(invoiceData.userId);
   let listProductHtml = ``;
+  let totalAmount = 0;
+  let totalPayment = 0;
   invoiceData.listProducts.forEach((product, index) => {
     listProductHtml += `
     <tr>
@@ -57,7 +59,10 @@ const generateHtmlInvoiceTemplate = async (invoiceData) => {
       <td>${product.productPrice * product.productQuantity}</td>
     </tr>
     `;
+    totalAmount += product.productPrice * product.productQuantity;
   });
+
+  totalPayment = (totalAmount / 100) * 90;
 
   const html = `
   <!DOCTYPE html>
@@ -944,17 +949,17 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
               ${listProductHtml}
               <tr id="total-amount">
                 <td colspan="5">Cộng tiền hàng</td>
-                <td>Germany</td>
+                <td>${totalAmount}</td>
               </tr>
 
               <tr id="total-payment">
                 <td colspan="5">Thuế giá trị gia tăng</td>
-                <td>Germany</td>
+                <td>10%</td>
               </tr>
 
               <tr id="total-payment">
                 <td colspan="5">Tổng tiền thanh toán</td>
-                <td>Germany</td>
+                <td>${totalPayment}</td>
               </tr>
 
               <tr id="total-payment-text">
@@ -991,6 +996,8 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
 const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData) => {
   const userCreateInvoiceData = await userService.getUserById(invoiceData.userId);
   let listProductHtml = ``;
+  let totalAmount = 0;
+  let totalPayment = 0;
   invoiceData.listProducts.forEach((product, index) => {
     listProductHtml += `
     <tr>
@@ -1002,7 +1009,10 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData) => {
       <td>${product.productPrice * product.productQuantity}</td>
     </tr>
     `;
+    totalAmount += product.productPrice * product.productQuantity;
   });
+
+  totalPayment = (totalAmount / 100) * 90;
 
   const html = `
   <!DOCTYPE html>
@@ -1279,10 +1289,9 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData) => {
       .valid-signature p {
         color: red;
       }
-
       .valid-icon {
         position: absolute;
-        bottom: 150px;
+        left: 50%;
       }
     </style>
   </head>
@@ -1889,17 +1898,17 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
               ${listProductHtml}
               <tr id="total-amount">
                 <td colspan="5">Cộng tiền hàng</td>
-                <td>Germany</td>
+                <td>${totalAmount}</td>
               </tr>
 
               <tr id="total-payment">
                 <td colspan="5">Thuế giá trị gia tăng</td>
-                <td>Germany</td>
+                <td>10%</td>
               </tr>
 
               <tr id="total-payment">
                 <td colspan="5">Tổng tiền thanh toán</td>
-                <td>Germany</td>
+                <td>${totalPayment}</td>
               </tr>
 
               <tr id="total-payment-text">
@@ -1921,7 +1930,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                   <p>Signature Valid</p>
                   <p>Được kí bởi: ${userCreateInvoiceData.organizationName}</p>
                   <p>Ngày kí: ${userCreateInvoiceData.releaseDate}</p>
-                </div>
+
                 <div class="valid-icon">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -1950,6 +1959,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                       points="21.5,34.8 17.2,30.6 13,34.9 17.3,39.1 20.1,36.2"
                     />
                   </svg>
+                </div>
                 </div>
               </div>
             </div>
