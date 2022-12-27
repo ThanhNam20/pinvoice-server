@@ -56,9 +56,16 @@ If you did not create an account, then ignore this email.`;
 };
 
 const sendCertificateAndKeyForNewClient = async (to, key, attachments) => {
-  const subject = 'Welcome';
+  const subject = 'Chào mừng';
   const mail = `
-    Your key: ${key}
+    Thân gửi anh, chị,
+
+    Yêu cầu cấp chứng chỉ của anh, chị đã được chấp thuận.
+    Chứng chỉ được gửi ở tệp file đính kèm.
+    Mật khẩu chứng chỉ: ${key}
+    Cảm ơn anh, chị đã tin tưởng và sử dụng dịch vụ của chúng tôi.
+
+    Trân trọng
   `;
   await sendEmail(to, subject, mail, attachments);
 };
