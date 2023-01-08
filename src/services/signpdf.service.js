@@ -45,7 +45,11 @@ class SignPDF {
       ByteRange,
       Contents: PDFHexString.of('A'.repeat(SIGNATURE_LENGTH)),
       Reason: PDFString.of('Tài liệu đã được kiểm định và kí số thành công!'),
-      M: PDFString.fromDate(new Date()),
+      M: PDFString.fromDate(
+        new Date().toLocaleString('en-US', {
+          timeZone: 'Asia/Ho_Chi_Minh',
+        })
+      ),
     });
 
     const signatureDictRef = loadedPdf.context.register(signatureDict);

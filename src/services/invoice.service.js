@@ -11,7 +11,12 @@ const uploadFile = require('../middlewares/upload');
 const { invoiceNumberGenerator } = require('../utils/common');
 
 const createInvoice = async (invoiceBody) => {
-  const invoiceData = { ...invoiceBody, createdDate: new Date().toUTCString() };
+  const invoiceData = {
+    ...invoiceBody,
+    createdDate: new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+    }),
+  };
   return Invoice.create(invoiceData);
 };
 
@@ -1009,7 +1014,9 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificat
 
   totalPayment = (totalAmount / 100) * 90;
 
-  const dateObj = new Date();
+  const dateObj = new Date().toLocaleString('en-US', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+  });
   const month = dateObj.getUTCMonth() + 1; // months from 1-12
   const day = dateObj.getUTCDate();
   const year = dateObj.getUTCFullYear();
@@ -2001,7 +2008,9 @@ const exportInvoiceWithClientSign = async (req, res) => {
     const updateBody = {
       ...invoice,
       isRelease: true,
-      releaseDate: new Date().toUTCString(),
+      releaseDate: new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Ho_Chi_Minh',
+      }),
       invoiceNumber: invoiceNumberGenerator(),
     };
 
