@@ -961,10 +961,6 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                 <td colspan="5">Tổng tiền thanh toán</td>
                 <td>${totalPayment}</td>
               </tr>
-
-              <tr id="total-payment-text">
-                <td colspan="6">Số tiền viết bằng chữ: </td>
-              </tr>
             </table>
           </div>
         </div>
@@ -1910,10 +1906,6 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                 <td colspan="5">Tổng tiền thanh toán</td>
                 <td>${totalPayment}</td>
               </tr>
-
-              <tr id="total-payment-text">
-                <td colspan="6">Số tiền viết bằng chữ: </td>
-              </tr>
             </table>
           </div>
         </div>
@@ -1929,7 +1921,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                 <div class="valid-signature">
                   <p>Signature Valid</p>
                   <p>Được kí bởi: ${userCreateInvoiceData.organizationName}</p>
-                  <p>Ngày kí: ${userCreateInvoiceData.releaseDate}</p>
+                  <p>Ngày kí: ${new Date().toUTCString()}</p>
 
                 <div class="valid-icon">
                   <svg
