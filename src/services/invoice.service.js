@@ -994,7 +994,12 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
   });
 };
 
-const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificatePath, clientCertificatePassword) => {
+const generateHtmlInvoiceTemplateWithSignFormat = async (
+  invoiceData,
+  certificatePath,
+  clientCertificatePassword,
+  response
+) => {
   const userCreateInvoiceData = await userService.getUserById(invoiceData.userId);
   let listProductHtml = ``;
   let totalAmount = 0;
@@ -1990,13 +1995,13 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
         const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
         fs.writeFileSync(pdfNameSign, signedDocs);
       } catch (error) {
-        res.status(500).send({
+        response.status(500).send({
           message: `${error}`,
         });
       }
     })
     .catch((error) => {
-      res.status(500).send({
+      response.status(500).send({
         message: `${error}`,
       });
     });
@@ -2028,7 +2033,7 @@ const exportInvoiceWithClientSign = async (req, res) => {
 
     Object.assign(invoice, updateBody);
     // Gen invoice có chữ kí ở template để sau kí vào đấy
-    await generateHtmlInvoiceTemplateWithSignFormat(invoice, req.file.filename, req.body.clientCertificatePassword);
+    await generateHtmlInvoiceTemplateWithSignFormat(invoice, req.file.filename, req.body.clientCertificatePassword, res);
     await invoice.save();
   } catch (err) {
     res.status(500).send({
