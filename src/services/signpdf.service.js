@@ -45,7 +45,7 @@ class SignPDF {
       SubFilter: 'adbe.pkcs7.detached',
       ByteRange,
       Contents: PDFHexString.of('A'.repeat(SIGNATURE_LENGTH)),
-      Reason: PDFString.of('Tài liệu đã được kiểm định và kí số thành công!'),
+      Reason: PDFString.of('This document was verified.'),
       M: PDFString.fromDate(moment().tz('Asia/Ho_Chi_Minh').toDate()),
     });
 

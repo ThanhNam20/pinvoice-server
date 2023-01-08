@@ -1980,17 +1980,25 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
       const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
       fs.writeFileSync(pdfName, pdfBuffer);
 
-      const pdfBufferSign = new SignPDF(
-        path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
-        path.resolve(`client_certificates/${certificatePath}`),
-        clientCertificatePassword
-      );
-      const signedDocs = await pdfBufferSign.signPDF();
-      const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
-      fs.writeFileSync(pdfNameSign, signedDocs);
+      try {
+        const pdfBufferSign = new SignPDF(
+          path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
+          path.resolve(`client_certificates/${certificatePath}`),
+          clientCertificatePassword
+        );
+        const signedDocs = await pdfBufferSign.signPDF();
+        const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
+        fs.writeFileSync(pdfNameSign, signedDocs);
+      } catch (error) {
+        res.status(500).send({
+          message: `${error}`,
+        });
+      }
     })
     .catch((error) => {
-      throw error;
+      res.status(500).send({
+        message: `${error}`,
+      });
     });
 };
 
