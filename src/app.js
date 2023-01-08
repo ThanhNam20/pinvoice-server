@@ -16,8 +16,6 @@ const ApiError = require('./utils/ApiError');
 
 const app = express();
 
-process.env.TZ = 'Asia/Ho_Chi_Minh';
-
 if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);

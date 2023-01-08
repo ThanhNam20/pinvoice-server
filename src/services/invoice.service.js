@@ -1016,9 +1016,9 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificat
   totalPayment = (totalAmount / 100) * 90;
 
   const dateObj = moment().tz('Asia/Ho_Chi_Minh');
-  const month = dateObj.getUTCMonth() + 1; // months from 1-12
-  const day = dateObj.getUTCDate();
-  const year = dateObj.getUTCFullYear();
+  const month = dateObj.get('month') + 1; // months from 1-12
+  const day = dateObj.get('date');
+  const year = dateObj.get('year');
 
   const html = `
   <!DOCTYPE html>
