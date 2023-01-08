@@ -880,12 +880,11 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
             <p class="title-vat">(VAT INVOICE)</p>
             <p class="title-electric">Bản thể hiện của hoá đơn điện tử</p>
             <p class="title-electric-english">(Electric invoice display)</p>
-            <p>Ngày tháng năm</p>
           </div>
           <div class="header-invoice">
-            <p>Mẫu số <i>(Form)</i>: 001122333</p>
+            <p>Mẫu số <i>(Form)</i>: 000000</p>
             <p>Kí hiệu <i>(Serial)</i>: AB/18E</p>
-            <p>Số <i>(No.)</i>: 090990009</p>
+            <p>Số <i>(No.)</i>: 000000</p>
           </div>
         </div>
         <div class="body">
@@ -1009,6 +1008,11 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData) => {
   });
 
   totalPayment = (totalAmount / 100) * 90;
+
+  const dateObj = new Date();
+  const month = dateObj.getUTCMonth() + 1; // months from 1-12
+  const day = dateObj.getUTCDate();
+  const year = dateObj.getUTCFullYear();
 
   const html = `
   <!DOCTYPE html>
@@ -1825,12 +1829,12 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
             <p class="title-vat">(VAT INVOICE)</p>
             <p class="title-electric">Bản thể hiện của hoá đơn điện tử</p>
             <p class="title-electric-english">(Electric invoice display)</p>
-            <p>Ngày tháng năm</p>
+            <p>Ngày ${day} tháng ${month} năm ${year}</p>
           </div>
           <div class="header-invoice">
-            <p>Mẫu số <i>(Form)</i>: 001122333</p>
+            <p>Mẫu số <i>(Form)</i>: 000000</p>
             <p>Kí hiệu <i>(Serial)</i>: AB/18E</p>
-            <p>Số <i>(No.)</i>: 090990009</p>
+            <p>Số <i>(No.)</i>: ${invoiceData.invoiceNumber}</p>
           </div>
         </div>
         <div class="body">
@@ -1921,7 +1925,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
                 <div class="valid-signature">
                   <p>Signature Valid</p>
                   <p>Được kí bởi: ${userCreateInvoiceData.organizationName}</p>
-                  <p>Ngày kí: ${new Date().toUTCString()}</p>
+                  <p>Ngày kí: ${`${day}/${month}/${year}`}</p>
 
                 <div class="valid-icon">
                   <svg
@@ -1994,6 +1998,9 @@ const exportInvoiceWithClientSign = async (req, res) => {
 
     Object.assign(invoice, updateBody);
     await invoice.save();
+
+    // Gen invoice có chữ kí ở template để sau kí vào đấy
+    await generateHtmlInvoiceTemplateWithSignFormat(invoice);
 
     const pdfBuffer = new SignPDF(
       path.resolve(`exports-pdf-with-sign/${req.body.invoiceId}.pdf`),
