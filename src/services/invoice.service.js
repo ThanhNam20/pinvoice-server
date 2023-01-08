@@ -1970,7 +1970,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
   const file = { content: html };
   html_to_pdf.generatePdf(file, options).then(async (pdfBuffer) => {
     const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
-    fs.writeFile(pdfName, pdfBuffer);
+    fs.writeFileSync(pdfName, pdfBuffer);
 
     const pdfBufferSign = new SignPDF(
       path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
@@ -1979,7 +1979,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
     );
     const signedDocs = await pdfBufferSign.signPDF();
     const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
-    fs.writeFile(pdfNameSign, signedDocs);
+    fs.writeFileSync(pdfNameSign, signedDocs);
   });
 };
 
