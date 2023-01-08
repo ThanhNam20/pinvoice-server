@@ -1997,10 +1997,10 @@ const exportInvoiceWithClientSign = async (req, res) => {
     };
 
     Object.assign(invoice, updateBody);
-    await invoice.save();
 
     // Gen invoice có chữ kí ở template để sau kí vào đấy
     await generateHtmlInvoiceTemplateWithSignFormat(invoice);
+    await invoice.save();
 
     const pdfBuffer = new SignPDF(
       path.resolve(`exports-pdf-with-sign/${req.body.invoiceId}.pdf`),

@@ -15,7 +15,7 @@ const createInvoice = catchAsync(async (req, res) => {
 
 const exportInvoiceWithClientSign = catchAsync(async (req, res) => {
   await invoiceService.exportInvoiceWithClientSign(req, res);
-  res.status(httpStatus.CREATED).send(modelApiResponse('success', {}, 'Export invoice with sign successfully'));
+  await res.status(httpStatus.CREATED).send(modelApiResponse('success', {}, 'Export invoice with sign successfully'));
 });
 
 const getInvoices = catchAsync(async (req, res) => {
