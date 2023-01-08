@@ -988,7 +988,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
   });
 };
 
-const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData) => {
+const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificatePath, clientCertificatePassword) => {
   const userCreateInvoiceData = await userService.getUserById(invoiceData.userId);
   let listProductHtml = ``;
   let totalAmount = 0;
@@ -1968,9 +1968,18 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
 `;
   const options = { format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'] };
   const file = { content: html };
-  html_to_pdf.generatePdf(file, options).then((pdfBuffer) => {
+  html_to_pdf.generatePdf(file, options).then(async (pdfBuffer) => {
     const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
-    fs.writeFileSync(pdfName, pdfBuffer);
+    fs.writeFile(pdfName, pdfBuffer);
+
+    const pdfBufferSign = new SignPDF(
+      path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
+      path.resolve(`client_certificates/${certificatePath}`),
+      clientCertificatePassword
+    );
+    const signedDocs = await pdfBufferSign.signPDF();
+    const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
+    fs.writeFile(pdfNameSign, signedDocs);
   });
 };
 
@@ -1997,19 +2006,9 @@ const exportInvoiceWithClientSign = async (req, res) => {
     };
 
     Object.assign(invoice, updateBody);
-
     // Gen invoice có chữ kí ở template để sau kí vào đấy
-    await generateHtmlInvoiceTemplateWithSignFormat(invoice);
+    await generateHtmlInvoiceTemplateWithSignFormat(invoice, req.file.filename, req.body.clientCertificatePassword);
     await invoice.save();
-
-    const pdfBuffer = new SignPDF(
-      path.resolve(`exports-pdf-with-sign/${req.body.invoiceId}.pdf`),
-      path.resolve(`client_certificates/${req.file.filename}`),
-      req.body.clientCertificatePassword
-    );
-    const signedDocs = await pdfBuffer.signPDF();
-    const pdfName = `./signed_invoices/${req.body.invoiceId}-sign.pdf`;
-    fs.writeFileSync(pdfName, signedDocs);
   } catch (err) {
     res.status(500).send({
       message: `${err}`,
