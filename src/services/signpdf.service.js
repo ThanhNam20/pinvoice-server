@@ -1,6 +1,7 @@
 const signer = require('node-signpdf').default;
 const { PDFDocument, PDFName, PDFNumber, PDFHexString, PDFString } = require('pdf-lib');
 const fs = require('fs');
+const moment = require('moment-timezone');
 const PDFArrayCustom = require('../utils/PDFArrayCustom');
 
 class SignPDF {
@@ -45,7 +46,7 @@ class SignPDF {
       ByteRange,
       Contents: PDFHexString.of('A'.repeat(SIGNATURE_LENGTH)),
       Reason: PDFString.of('Tài liệu đã được kiểm định và kí số thành công!'),
-      M: PDFString.fromDate(new Date()),
+      M: PDFString.fromDate(moment().tz('Asia/Ho_Chi_Minh')),
     });
 
     const signatureDictRef = loadedPdf.context.register(signatureDict);

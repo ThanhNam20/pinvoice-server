@@ -3,6 +3,7 @@ const fs = require('fs');
 // eslint-disable-next-line camelcase
 const html_to_pdf = require('html-pdf-node');
 const path = require('path');
+const moment = require('moment-timezone');
 const SignPDF = require('./signpdf.service');
 const { Invoice } = require('../models');
 const ApiError = require('../utils/ApiError');
@@ -11,7 +12,12 @@ const uploadFile = require('../middlewares/upload');
 const { invoiceNumberGenerator } = require('../utils/common');
 
 const createInvoice = async (invoiceBody) => {
-  const invoiceData = { ...invoiceBody, createdDate: new Date().toUTCString() };
+  const invoiceData = {
+    ...invoiceBody,
+    createdDate: new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Ho_Chi_Minh',
+    }),
+  };
   return Invoice.create(invoiceData);
 };
 
@@ -1009,7 +1015,7 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificat
 
   totalPayment = (totalAmount / 100) * 90;
 
-  const dateObj = new Date();
+  const dateObj = moment().tz('Asia/Ho_Chi_Minh');
   const month = dateObj.getUTCMonth() + 1; // months from 1-12
   const day = dateObj.getUTCDate();
   const year = dateObj.getUTCFullYear();
@@ -1970,7 +1976,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
   const file = { content: html };
   html_to_pdf.generatePdf(file, options).then(async (pdfBuffer) => {
     const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
-    fs.writeFile(pdfName, pdfBuffer);
+    fs.writeFileSync(pdfName, pdfBuffer);
 
     const pdfBufferSign = new SignPDF(
       path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
@@ -1979,7 +1985,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
     );
     const signedDocs = await pdfBufferSign.signPDF();
     const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
-    fs.writeFile(pdfNameSign, signedDocs);
+    fs.writeFileSync(pdfNameSign, signedDocs);
   });
 };
 
@@ -2001,7 +2007,9 @@ const exportInvoiceWithClientSign = async (req, res) => {
     const updateBody = {
       ...invoice,
       isRelease: true,
-      releaseDate: new Date().toUTCString(),
+      releaseDate: new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Ho_Chi_Minh',
+      }),
       invoiceNumber: invoiceNumberGenerator(),
     };
 
