@@ -11,12 +11,7 @@ const uploadFile = require('../middlewares/upload');
 const { invoiceNumberGenerator } = require('../utils/common');
 
 const createInvoice = async (invoiceBody) => {
-  const invoiceData = {
-    ...invoiceBody,
-    createdDate: new Date().toLocaleString('en-US', {
-      timeZone: 'Asia/Ho_Chi_Minh',
-    }),
-  };
+  const invoiceData = { ...invoiceBody, createdDate: new Date().toUTCString() };
   return Invoice.create(invoiceData);
 };
 
@@ -1014,9 +1009,7 @@ const generateHtmlInvoiceTemplateWithSignFormat = async (invoiceData, certificat
 
   totalPayment = (totalAmount / 100) * 90;
 
-  const dateObj = new Date().toLocaleString('en-US', {
-    timeZone: 'Asia/Ho_Chi_Minh',
-  });
+  const dateObj = new Date();
   const month = dateObj.getUTCMonth() + 1; // months from 1-12
   const day = dateObj.getUTCDate();
   const year = dateObj.getUTCFullYear();
@@ -1977,7 +1970,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
   const file = { content: html };
   html_to_pdf.generatePdf(file, options).then(async (pdfBuffer) => {
     const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
-    fs.writeFileSync(pdfName, pdfBuffer);
+    fs.writeFile(pdfName, pdfBuffer);
 
     const pdfBufferSign = new SignPDF(
       path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
@@ -1986,7 +1979,7 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
     );
     const signedDocs = await pdfBufferSign.signPDF();
     const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
-    fs.writeFileSync(pdfNameSign, signedDocs);
+    fs.writeFile(pdfNameSign, signedDocs);
   });
 };
 
@@ -2008,9 +2001,7 @@ const exportInvoiceWithClientSign = async (req, res) => {
     const updateBody = {
       ...invoice,
       isRelease: true,
-      releaseDate: new Date().toLocaleString('en-US', {
-        timeZone: 'Asia/Ho_Chi_Minh',
-      }),
+      releaseDate: new Date().toUTCString(),
       invoiceNumber: invoiceNumberGenerator(),
     };
 
