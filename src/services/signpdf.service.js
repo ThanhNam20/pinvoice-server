@@ -31,7 +31,7 @@ class SignPDF {
     const loadedPdf = await PDFDocument.load(this.pdfDoc);
     const ByteRange = PDFArrayCustom.withContext(loadedPdf.context);
     const DEFAULT_BYTE_RANGE_PLACEHOLDER = '**********';
-    const SIGNATURE_LENGTH = 9999;
+    const SIGNATURE_LENGTH = 5000;
     const pages = loadedPdf.getPages();
 
     ByteRange.push(PDFNumber.of(0));

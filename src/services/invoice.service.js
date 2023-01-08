@@ -1974,19 +1974,24 @@ cnNpb24AUERGLTEuNQ1Ag1dMAAAAAElFTkSuQmCC"
 `;
   const options = { format: 'A4', args: ['--no-sandbox', '--disable-setuid-sandbox'] };
   const file = { content: html };
-  html_to_pdf.generatePdf(file, options).then(async (pdfBuffer) => {
-    const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
-    fs.writeFileSync(pdfName, pdfBuffer);
+  html_to_pdf
+    .generatePdf(file, options)
+    .then(async (pdfBuffer) => {
+      const pdfName = `./exports-pdf-with-sign/${invoiceData.id}.pdf`;
+      fs.writeFileSync(pdfName, pdfBuffer);
 
-    const pdfBufferSign = new SignPDF(
-      path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
-      path.resolve(`client_certificates/${certificatePath}`),
-      clientCertificatePassword
-    );
-    const signedDocs = await pdfBufferSign.signPDF();
-    const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
-    fs.writeFileSync(pdfNameSign, signedDocs);
-  });
+      const pdfBufferSign = new SignPDF(
+        path.resolve(`exports-pdf-with-sign/${invoiceData.id}.pdf`),
+        path.resolve(`client_certificates/${certificatePath}`),
+        clientCertificatePassword
+      );
+      const signedDocs = await pdfBufferSign.signPDF();
+      const pdfNameSign = `./signed_invoices/${invoiceData.id}-sign.pdf`;
+      fs.writeFileSync(pdfNameSign, signedDocs);
+    })
+    .catch((error) => {
+      throw error;
+    });
 };
 
 const exportInvoiceWithClientSign = async (req, res) => {
