@@ -67,6 +67,11 @@ const invoiceSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    customerEmail: {
+      type: String,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,

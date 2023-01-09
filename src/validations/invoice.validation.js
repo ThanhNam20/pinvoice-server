@@ -14,6 +14,7 @@ const createInvoice = {
     totalPayment: Joi.string().required(),
     customerCompanyName: Joi.string(),
     note: Joi.string(),
+    customerEmail: Joi.string().required(),
   }),
 };
 
