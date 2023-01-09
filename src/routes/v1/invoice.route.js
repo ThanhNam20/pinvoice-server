@@ -30,4 +30,6 @@ router.post(
 
 router.post('/export-invoice', auth(), invoiceController.exportInvoiceWithClientSign);
 
+router.post('/send-invoice', auth(), invoiceController.sendInvoiceForClient);
+
 module.exports = router;

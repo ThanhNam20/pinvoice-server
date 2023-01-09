@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const pick = require('../utils/pick');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
-const { userService, certificateService, emailService } = require('../services');
+const { userService, certificateService } = require('../services');
 const { modelApiResponse } = require('../utils/common');
 
 const createUser = catchAsync(async (req, res) => {

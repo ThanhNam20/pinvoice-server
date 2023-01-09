@@ -70,10 +70,24 @@ const sendCertificateAndKeyForNewClient = async (to, key, attachments) => {
   await sendEmail(to, subject, mail, attachments);
 };
 
+const sendInvoiceForClient = async (to, attachments) => {
+  const subject = 'Hoá đơn điện tử';
+  const mail = `
+    Thân gửi anh, chị,
+
+    Hoá đơn của anh chị đã được xử lý,
+    Cảm ơn anh, chị đã tin tưởng và sử dụng dịch vụ của chúng tôi.
+
+    Trân trọng,
+  `;
+  await sendEmail(to, subject, mail, attachments);
+};
+
 module.exports = {
   transport,
   sendEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
   sendCertificateAndKeyForNewClient,
+  sendInvoiceForClient,
 };

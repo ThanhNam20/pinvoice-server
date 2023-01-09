@@ -65,6 +65,14 @@ const showInvoiceInBrowserWithSign = catchAsync(async (req, res) => {
   }
 });
 
+const sendInvoiceForClient = catchAsync(async (req, res) => {
+  try {
+    await invoiceService.sendInvoiceForClient(req, res);
+  } catch (error) {
+    res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
+  }
+});
+
 module.exports = {
   createInvoice,
   getInvoices,
@@ -74,4 +82,5 @@ module.exports = {
   exportInvoiceWithClientSign,
   showInvoiceInBrowser,
   showInvoiceInBrowserWithSign,
+  sendInvoiceForClient,
 };

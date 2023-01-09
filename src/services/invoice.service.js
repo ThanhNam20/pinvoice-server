@@ -7,7 +7,7 @@ const moment = require('moment-timezone');
 const SignPDF = require('./signpdf.service');
 const { Invoice } = require('../models');
 const ApiError = require('../utils/ApiError');
-const { userService } = require('.');
+const { userService, emailService } = require('.');
 const uploadFile = require('../middlewares/upload');
 const { invoiceNumberGenerator } = require('../utils/common');
 
@@ -2042,6 +2042,19 @@ const exportInvoiceWithClientSign = async (req, res) => {
   }
 };
 
+const sendInvoiceForClient = async (req, res) => {
+  const invoice = await getInvoiceById(req.body.invoiceId);
+  if (!invoice) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
+  }
+  const pdfNameSign = `./signed_invoices/${invoice.id}-sign.pdf`;
+  if (fs.existsSync(pdfNameSign)) {
+    await emailService.sendInvoiceForClient(invoice.customerEmail, pdfNameSign);
+  } else {
+    res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
+  }
+};
+
 module.exports = {
   createInvoice,
   getInvoiceById,
@@ -2051,4 +2064,5 @@ module.exports = {
   generateHtmlInvoiceTemplate,
   exportInvoiceWithClientSign,
   generateHtmlInvoiceTemplateWithSignFormat,
+  sendInvoiceForClient,
 };
