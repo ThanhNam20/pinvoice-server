@@ -68,6 +68,7 @@ const showInvoiceInBrowserWithSign = catchAsync(async (req, res) => {
 const sendInvoiceForClient = catchAsync(async (req, res) => {
   try {
     await invoiceService.sendInvoiceForClient(req, res);
+    res.status(httpStatus.ACCEPTED).send({ result: 'Send invoice successfully' });
   } catch (error) {
     res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
   }

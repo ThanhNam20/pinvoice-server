@@ -2043,13 +2043,15 @@ const exportInvoiceWithClientSign = async (req, res) => {
 };
 
 const sendInvoiceForClient = async (req, res) => {
+  console.log(req.body.invoiceId);
   const invoice = await getInvoiceById(req.body.invoiceId);
   if (!invoice) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Invoice not found');
   }
-  const pdfNameSign = `./signed_invoices/${invoice.id}-sign.pdf`;
+  const pdfNameSign = `./signed_invoices/${req.body.invoiceId}-sign.pdf`;
   if (fs.existsSync(pdfNameSign)) {
-    await emailService.sendInvoiceForClient(invoice.customerEmail, pdfNameSign);
+    const attachments = [{ filename: `${req.body.invoiceId}-signed.pdf`, path: pdfNameSign}];
+    await emailService.sendInvoiceForClient(invoice.customerEmail, attachments);
   } else {
     res.status(httpStatus.NOT_FOUND).send({ result: 'Invoice not found' });
   }
