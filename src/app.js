@@ -53,7 +53,7 @@ if (config.env === 'production') {
 // v1 api routes
 app.use('/api/v1', routes);
 
-app.get('/sitemap.xml', function (req, res) {
+app.get('/api/sitemap.xml', function (req, res) {
   res.sendFile(`${__dirname}/sitemap.xml`);
 });
 // send back a 404 error for any unknown api request
